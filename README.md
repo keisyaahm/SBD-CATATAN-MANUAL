@@ -4,8 +4,8 @@ Modul ini berfokus secara eksklusif pada DDL. Dalam sistem basis data, perintah 
 
 ## Daftar Isi
 
-1.  [Konsep Dasar dan Analogi Logika](konsep-dasar-dan-analogi-logika)
-2.  [Tipe Data Esensial](tipe-data-esensial)
+1.  [Konsep Dasar dan Analogi Logika](https://www.google.com/search?q=%231-konsep-dasar-dan-analogi-logika)
+2.  [Tipe Data Esensial](https://www.google.com/search?q=%232-tipe-data-esensial)
 3.  [Aturan Main (Constraints)](https://www.google.com/search?q=%233-aturan-main-constraints)
 4.  [Sintaks Lengkap Perintah DDL](https://www.google.com/search?q=%234-sintaks-lengkap-perintah-ddl)
 5.  [Panduan Menganalisis Soal Cerita (Studi Kasus)](https://www.google.com/search?q=%235-panduan-menganalisis-soal-cerita-studi-kasus)
