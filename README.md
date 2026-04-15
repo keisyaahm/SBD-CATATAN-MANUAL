@@ -1,4 +1,3 @@
-```
 # 📚 Belajar Sistem Basis Data - Fokus DDL (Data Definition Language)
 
 Repository ini berisi catatan pribadi, *cheatsheet* kode, dan penyelesaian studi kasus terkait **Data Definition Language (DDL)** menggunakan MySQL/MariaDB dan phpMyAdmin. 
