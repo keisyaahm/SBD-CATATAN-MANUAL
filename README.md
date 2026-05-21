@@ -1,3 +1,87 @@
+# Panduan Uji Coba (Testing) Trigger SQL - Kelompok 3
+
+Dokumen ini berisi skenario kueri SQL untuk menguji coba seluruh trigger yang telah dibuat (`INSERT`, `UPDATE`, dan `DELETE`). Skenario dibagi menjadi dua bagian: memicu pesan eror/validasi (**BEFORE**) dan melihat hasil sukses pencatatan riwayat (**AFTER**).
+
+---
+
+## 1. Uji Coba Trigger INSERT
+
+### Tes BEFORE INSERT (Validasi Umur)
+Coba masukkan data mahasiswa dengan umur di bawah 17 tahun. Database harus otomatis menolak proses ini dan menampilkan pesan eror.
+```sql
+INSERT INTO Mahasiswa (nama, umur) VALUES ('Rian Kecil', 15);
+```
+* **Hasil yang Diharapkan:** Muncul pesan eror `Umur minimal 17 tahun`.
+
+### Tes AFTER INSERT (Log Aktivitas)
+Masukkan data mahasiswa yang valid (umur >= 17 tahun) untuk melihat apakah data masuk dan log tercatat otomatis.
+```sql
+INSERT INTO Mahasiswa (nama, umur) VALUES ('Budi Santoso', 20);
+```
+* **Hasil yang Diharapkan:** Data sukses masuk ke tabel `Mahasiswa`.
+
+### Cek Hasil Log Aktivitas
+```sql
+SELECT * FROM Log_Aktivitas;
+```
+* **Hasil di Tabel Log:** Kolom aktivitas harus otomatis memuat teks: `"Mahasiswa Budi Santoso ditambahkan"`.
+
+---
+
+## 2. Uji Coba Trigger UPDATE
+
+### Tes BEFORE UPDATE (Mencegah Umur Negatif)
+Coba ubah umur mahasiswa yang sudah terdaftar menjadi angka minus atau negatif.
+```sql
+UPDATE Mahasiswa SET umur = -5 WHERE nama = 'Budi Santoso';
+```
+* **Hasil yang Diharapkan:** Muncul pesan eror `Umur tidak boleh negatif`.
+
+###  Tes AFTER UPDATE (Log Perubahan Data)
+Coba ubah atau edit nama mahasiswa dari 'Budi Santoso' menjadi 'Budi Perkasa'.
+```sql
+UPDATE Mahasiswa SET nama = 'Budi Perkasa' WHERE nama = 'Budi Santoso';
+```
+* **Hasil yang Diharapkan:** Nama sukses diperbarui di tabel `Mahasiswa`.
+
+### Cek Hasil Log Aktivitas
+```sql
+SELECT * FROM Log_Aktivitas;
+```
+* **Hasil di Tabel Log:** Kolom aktivitas harus otomatis memuat teks: `"Data Budi Santoso diubah menjadi Budi Perkasa"`.
+
+---
+
+## 3. Uji Coba Trigger DELETE
+
+### Tes BEFORE DELETE (Melindungi Data Admin)
+Sebelum melakukan tes ini, masukkan data bernama 'Admin' terlebih dahulu, lalu coba hapus data tersebut.
+```sql
+-- Jalankan ini dulu untuk menyiapkan data uji coba
+INSERT INTO Mahasiswa (nama, umur) VALUES ('Admin', 25);
+
+-- Coba lakukan penghapusan (Pasti Ditolak)
+DELETE FROM Mahasiswa WHERE nama = 'Admin';
+```
+* **Hasil yang Diharapkan:** Muncul pesan eror `Data Admin tidak boleh dihapus`.
+
+###  Tes AFTER DELETE (Log Penghapusan)
+Coba hapus data mahasiswa biasa yang tadi sudah diubah namanya ('Budi Perkasa').
+```sql
+DELETE FROM Mahasiswa WHERE nama = 'Budi Perkasa';
+```
+* **Hasil yang Diharapkan:** Data sukses terhapus dari tabel `Mahasiswa`.
+
+### Cek Hasil Log Aktivitas
+```sql
+SELECT * FROM Log_Aktivitas;
+```
+* **Hasil di Tabel Log:** Kolom aktivitas harus otomatis memuat teks: `"Mahasiswa Budi Perkasa dihapus"`.
+
+---
+
+
+
 # Panduan Implementasi Trigger SQL - Kelompok 3
 
 Repositori ini berisi kumpulan kode SQL untuk implementasi **Trigger** pada database, mencakup operasi `INSERT`, `UPDATE`, dan `DELETE`. Setiap operasi dilengkapi dengan trigger `BEFORE` (untuk validasi data) dan `AFTER` (untuk pencatatan log aktivitas otomatis).
