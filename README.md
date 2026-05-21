@@ -1,3 +1,127 @@
+# Panduan Implementasi Trigger SQL - Kelompok 3
+
+Repositori ini berisi kumpulan kode SQL untuk implementasi **Trigger** pada database, mencakup operasi `INSERT`, `UPDATE`, dan `DELETE`. Setiap operasi dilengkapi dengan trigger `BEFORE` (untuk validasi data) dan `AFTER` (untuk pencatatan log aktivitas otomatis).
+
+---
+
+## Persyaratan Tabel (Prerequisite)
+
+Sebelum memasang trigger, pastikan Anda sudah membuat tabel `Mahasiswa` dan `Log_Aktivitas` terlebih dahulu di database Anda.
+
+---
+
+## Kumpulan Kode Trigger
+
+### A. Trigger INSERT
+
+*   **BEFORE INSERT:** Validasi umur agar mahasiswa yang didaftarkan minimal berusia 17 tahun.
+*   **AFTER INSERT:** Otomatis mencatat riwayat ke tabel log setelah data mahasiswa sukses ditambahkan.
+
+```sql
+-- BEFORE INSERT: Validasi Umur
+DELIMITER $$ 
+
+CREATE TRIGGER before_insert_mahasiswa 
+BEFORE INSERT ON Mahasiswa 
+FOR EACH ROW 
+BEGIN 
+    IF NEW.umur < 17 THEN 
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Umur minimal 17 tahun'; 
+    END IF; 
+END$$
+
+-- AFTER INSERT: Log Aktivitas
+CREATE TRIGGER after_insert_mahasiswa 
+AFTER INSERT ON Mahasiswa 
+FOR EACH ROW 
+BEGIN
+    INSERT INTO Log_Aktivitas(aktivitas) 
+    VALUES(CONCAT('Mahasiswa ', NEW.nama, ' ditambahkan')); 
+END$$ 
+
+DELIMITER ;
+```
+
+---
+
+### B. Trigger UPDATE
+
+*   **BEFORE UPDATE:** Memastikan data umur yang diubah tidak bernilai negatif (di bawah 0).
+*   **AFTER UPDATE:** Otomatis mencatat riwayat perubahan nama lama menjadi nama baru ke tabel log.
+
+```sql
+-- BEFORE UPDATE: Mencegah Umur Negatif
+DELIMITER $$ 
+
+CREATE TRIGGER before_update_mahasiswa 
+BEFORE UPDATE ON Mahasiswa 
+FOR EACH ROW 
+BEGIN 
+    IF NEW.umur < 0 THEN 
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Umur tidak boleh negatif'; 
+    END IF; 
+END$$
+
+-- AFTER UPDATE: Log Perubahan Data
+CREATE TRIGGER after_update_mahasiswa 
+AFTER UPDATE ON Mahasiswa 
+FOR EACH ROW 
+BEGIN
+    INSERT INTO Log_Aktivitas(aktivitas) 
+    VALUES(CONCAT('Data ', OLD.nama, ' diubah menjadi ', NEW.nama)); 
+END$$ 
+
+DELIMITER ;
+```
+
+---
+
+### C. Trigger DELETE
+
+*   **BEFORE DELETE:** Memblokir proses penghapusan jika data mahasiswa yang dihapus bernama 'Admin'.
+*   **AFTER DELETE:** Otomatis mencatat nama mahasiswa yang dihapus ke dalam tabel log sebagai arsip riwayat.
+
+```sql
+-- BEFORE DELETE: Melindungi Admin
+DELIMITER $$ 
+
+CREATE TRIGGER before_delete_mahasiswa 
+BEFORE DELETE ON Mahasiswa 
+FOR EACH ROW 
+BEGIN 
+    IF OLD.nama = 'Admin' THEN 
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Data Admin tidak boleh dihapus'; 
+    END IF; 
+END$$
+
+-- AFTER DELETE: Log Penghapusan
+CREATE TRIGGER after_delete_mahasiswa 
+AFTER DELETE ON Mahasiswa 
+FOR EACH ROW 
+BEGIN
+    INSERT INTO Log_Aktivitas(aktivitas) 
+    VALUES(CONCAT('Mahasiswa ', OLD.nama, ' dihapus')); 
+END$$ 
+
+DELIMITER ;
+```
+
+---
+
+## 🛠️ Cara Menghapus Trigger (Jika Diperlukan)
+
+Jika ingin memperbarui atau menghapus trigger yang sudah terpasang, gunakan perintah berikut:
+
+```sql
+DROP TRIGGER IF EXISTS before_insert_mahasiswa;
+DROP TRIGGER IF EXISTS after_insert_mahasiswa;
+DROP TRIGGER IF EXISTS before_update_mahasiswa;
+DROP TRIGGER IF EXISTS after_update_mahasiswa;
+DROP TRIGGER IF EXISTS before_delete_mahasiswa;
+DROP TRIGGER IF EXISTS after_delete_mahasiswa;
+```
+
+
 # Panduan Lengkap DDL (Data Definition Language)
 
 Modul ini berfokus secara eksklusif pada DDL. Dalam sistem basis data, perintah SQL terbagi menjadi beberapa kategori, namun DDL adalah fondasi utamanya.
